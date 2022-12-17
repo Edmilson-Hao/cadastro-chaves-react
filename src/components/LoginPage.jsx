@@ -1,35 +1,50 @@
-import React from 'react'
-import { getAuth, signInWithEmailAndPassword }  from 'firebase/auth'
+import React, { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { auth, signInWithEmailAndPassword } from '../firebase'
+import { useAuthState } from 'react-firebase-hooks/auth'
 
-export default _ => {
-    var email
-    var password
-    return(
-        <div>
-            <input type="email" onChange={e => {
-                email = e.target.value
-                console.log(email)
-            }}/>
-            <input type="password" onChange={e => {
-                 password = e.target.value
-                 console.log(password)
-            }} />
-            <button onClick={e => {
-                const auth = getAuth();
-                signInWithEmailAndPassword(auth, email, password)
-                    .then((userCredential) => {
-                    // Signed in 
-                    const user = userCredential.user;
-                    console.log(user.uid)
-                    // ...
-                    })
-                    .catch((error) => {
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    });
+import './LoginPage.css'
 
-                }
-            }>Login</button>
-        </div>
-    )
+
+function Login() {
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [user, loading, error] = useAuthState(auth)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (loading) {
+      // maybe trigger a loading screen
+      return
+    }
+    if (user) navigate('/sendData')
+  }, [user, loading])
+  return (
+    <div className='login'>
+      <div className='login__container'>
+        <input
+          type='text'
+          className='login__textBox'
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder='E-mail Address'
+        />
+        <input
+          type='password'
+          className='login__textBox'
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder='Password'
+        />
+        <button
+          className='login__btn'
+          onClick={() => signInWithEmailAndPassword(email, password)}
+        >
+          Login
+        </button>
+      </div>
+    </div>
+  )
 }
+export default Login

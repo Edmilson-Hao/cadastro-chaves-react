@@ -1,7 +1,9 @@
 import React from 'react'
 
+import { auth, app, db } from '../firebase'
+
 export default props => {
     return(
-        <div>SendData</div>
+        <div>{auth.currentUser.email}</div>
     )
 }

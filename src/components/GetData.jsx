@@ -1,15 +1,10 @@
+import userEvent from '@testing-library/user-event'
 import React from 'react'
-import { getAuth, signInWithEmailAndPassword }  from 'firebase/auth'
 
-const checkIfLogged = () => {
-    firebaseApp.auth().onAuthStateChanged( user => {
-        if (!user) console.log('Not Logged In')
-        else console.log('Logged')
-      })
-}
+import { auth, app, db } from '../firebase'
 
 export default props => {
     return(
-        {checkIfLogged}
+        <div>getData</div>
     )
 }
