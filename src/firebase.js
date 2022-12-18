@@ -15,8 +15,6 @@ const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 const db = getFirestore(app)
 
-export { auth, app, db, signInWithEmailAndPassword }
-
 
 const logInWithEmailAndPassword = async (email, password) => {
   try {
@@ -26,3 +24,5 @@ const logInWithEmailAndPassword = async (email, password) => {
     alert(err.message)
   }
 }
+
+export { auth, app, db, signInWithEmailAndPassword }

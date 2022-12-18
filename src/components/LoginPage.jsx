@@ -6,7 +6,7 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import './LoginPage.css'
 
 
-function Login() {
+export default props => {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -36,6 +36,7 @@ function Login() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder='Password'
+          onKeyPress={e => e.key ==='Enter' ? signInWithEmailAndPassword(auth, email, password) : null }
         />
         <button
           className='login__btn'
@@ -47,4 +48,3 @@ function Login() {
     </div>
   )
 }
-export default Login
