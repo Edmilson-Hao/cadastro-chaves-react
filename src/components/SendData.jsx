@@ -3,8 +3,26 @@ import React from 'react'
 import { auth, app, db } from '../firebase'
 
 export default props => {
-    return(
+    const resizeImage = e => {
+        const file = e.target.files[0]
+
+        const blobImage = URL.createObjectURL(file)
+    
+        const image = new Image(blobImage)
+    
+        const resizedImage = document.getElementById('resizedImage')
+        resizedImage.src = blobImage
+        resizedImage.style.width = '500px'
+        resizedImage.style.height = '500px'
         
+        const reader = new FileReader()
+        reader.readAsDataURL(file);
+        reader.onloadend = function (){
+            console.log('Result:', reader.result)
+        }
+
+    }
+    return(
         // <div>{auth.currentUser.email}</div>
 
         <div className="send__container">
@@ -127,11 +145,13 @@ export default props => {
 
             <textarea className="input form-control" id="observacao" placeholder="Observação" />
 
-            <input type="file" accept="image/*" id="chaveFoto" onChange={e => console.log(e.toDataURL())} />
+            <input type="file" accept="image/*" id="chaveFoto" onChange={e => resizeImage(e)} />
 
             <div id="selectedImage"></div>
-            <button className="input btn btn-success" id="botaoEnviar">Enviar</button>
 
+            <button className="input btn btn-success" id="botaoEnviar">Enviar</button>
+<br />
+            <img src="" alt="" id='resizedImage' />
         </div>
     )
 }
