@@ -1,25 +1,54 @@
 import React from 'react'
+import Compressor from 'compressorjs'
 
 import { auth, app, db } from '../firebase'
 
 export default props => {
+
     const resizeImage = e => {
         const file = e.target.files[0]
 
         const blobImage = URL.createObjectURL(file)
     
-        const image = new Image(blobImage)
+        const image = new Image()
+        image.src = blobImage
     
-        const resizedImage = document.getElementById('resizedImage')
-        resizedImage.src = blobImage
-        resizedImage.style.width = '500px'
-        resizedImage.style.height = '500px'
+        // const reader = new FileReader()
+        // reader.readAsDataURL(file);
         
-        const reader = new FileReader()
-        reader.readAsDataURL(file);
-        reader.onloadend = function (){
-            console.log('Result:', reader.result)
-        }
+        // var finalImage
+        // reader.onloadend = function (){
+        //     finalImage = reader.result
+        //     console.log(finalImage)
+        // }
+
+        // const resizedImage = document.getElementById('resizedImage')
+        // resizedImage.style.width = '500px'
+        // resizedImage.style.height = '500px'
+        // resizedImage.src = blobImage
+
+        const canvas = document.createElement('canvas')
+        const ctx = canvas.getContext('2d')
+        console.log(image)
+        // image.onload = function() {
+        //     ctx.drawImage(image, 0, 0)
+        //     const finalImage = canvas.toDataURL("image/jpeg",0.9)
+        //     console.log(finalImage)
+        // }
+
+        ctx.drawImage(blobImage, 0, 0)
+        const finalImage = canvas.toDataURL("image/jpeg",0.9)
+        console.log(finalImage)
+
+
+
+
+
+
+
+
+
+
 
     }
     return(
