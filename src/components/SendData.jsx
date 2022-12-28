@@ -2,53 +2,92 @@ import React from 'react'
 import Compressor from 'compressorjs'
 
 import { auth, app, db } from '../firebase'
+import { documentId } from 'firebase/firestore'
 
 export default props => {
+    let imobiliaria
+    let vistoriador
+    let endereço
+    let tipo
+    let observacao
+    let dataEnvio
+    let timeStamp
+
+    const getFormData = () => {
+        imobiliaria = document.getElementsByName('imobiliaria')[0].value
+        vistoriador = document.getElementsByName('vistoriador')[0].value
+        endereço = document.getElementById('endereco').value
+        tipo = document.querySelector('input[name="tipodevistoria"]:checked').value
+        observacao = document.getElementById('observacao').value
+        dataEnvio = new Date().toLocaleDateString("pt-BR")
+        timeStamp = Date.now()
+    }
+
+    const sendDataToFirebase = () => {
+        db.collection('chaves').add({
+            Imobiliária: imobiliaria,
+            Vistoriador: vistoriador,
+            Endereço: endereço,
+            Tipo: tipo,
+            Observação: observacao,
+            Data: dataEnvio,
+            FotoID: timeStamp
+        })
+        .then(() => {
+            db.collection('fotos').add({
+                Foto: foto,
+                FotoID: timeStamp
+            })
+            document.getElementById('loading').style.display = "none";
+            successSignal()
+            resetData()
+        })
+        .catch(err => {
+            failedSignal(errorMessageOne)
+        })
+    }
+
+    const calculateSize = (img, maxWidth, maxHeight) => {
+        let width = img.width;
+        let height = img.height;
+      
+        // calculate the width and height, constraining the proportions
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+        return [width, height];
+    }
 
     const resizeImage = e => {
         const file = e.target.files[0]
-
         const blobImage = URL.createObjectURL(file)
-    
         const image = new Image()
-        image.src = blobImage
-    
-        // const reader = new FileReader()
-        // reader.readAsDataURL(file);
-        
-        // var finalImage
-        // reader.onloadend = function (){
-        //     finalImage = reader.result
-        //     console.log(finalImage)
-        // }
-
-        // const resizedImage = document.getElementById('resizedImage')
-        // resizedImage.style.width = '500px'
-        // resizedImage.style.height = '500px'
-        // resizedImage.src = blobImage
-
-        const canvas = document.createElement('canvas')
+        const canvas = document.getElementById('resizedImage')
         const ctx = canvas.getContext('2d')
-        console.log(image)
-        // image.onload = function() {
-        //     ctx.drawImage(image, 0, 0)
-        //     const finalImage = canvas.toDataURL("image/jpeg",0.9)
-        //     console.log(finalImage)
-        // }
 
-        ctx.drawImage(blobImage, 0, 0)
+        image.src = blobImage
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+        image.onload = function() {
+            const [newWidth, newHeight] = calculateSize(image, 525, 700)
+
+            canvas.style.display = 'flex'
+
+            ctx.drawImage(image, 0, 0, newWidth, newHeight)
+
+            const finalImage = canvas.toDataURL("image/jpeg",1)
+            console.log(`Final compressed image: ${finalImage}`)
+        }
+
         const finalImage = canvas.toDataURL("image/jpeg",0.9)
-        console.log(finalImage)
-
-
-
-
-
-
-
-
-
-
 
     }
     return(
@@ -178,9 +217,9 @@ export default props => {
 
             <div id="selectedImage"></div>
 
-            <button className="input btn btn-success" id="botaoEnviar">Enviar</button>
+            <button className="input btn btn-success" id="botaoEnviar" onClick={sendDataToFirebase()}>Enviar</button>
 <br />
-            <img src="" alt="" id='resizedImage' />
+            <canvas id='resizedImage' width='525' height='700' style={{display: 'none'}}></canvas>
         </div>
     )
 }
