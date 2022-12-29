@@ -1,8 +1,9 @@
 import React from 'react'
-import Compressor from 'compressorjs'
 
 import { auth, app, db } from '../firebase'
 import { documentId } from 'firebase/firestore'
+import { getFirestore, collection, getDocs, query, where, addDoc } from 'firebase/firestore'
+
 
 export default props => {
     let imobiliaria
@@ -23,30 +24,14 @@ export default props => {
         timeStamp = Date.now()
     }
 
-    const sendDataToFirebase = () => {
-        db.collection('chaves').add({
-            Imobiliária: imobiliaria,
-            Vistoriador: vistoriador,
-            Endereço: endereço,
-            Tipo: tipo,
-            Observação: observacao,
-            Data: dataEnvio,
-            FotoID: timeStamp
-        })
-        .then(() => {
-            db.collection('fotos').add({
-                Foto: foto,
-                FotoID: timeStamp
-            })
-            document.getElementById('loading').style.display = "none";
-            successSignal()
-            resetData()
-        })
-        .catch(err => {
-            failedSignal(errorMessageOne)
-        })
+    const keyCollection = collection(db, 'chaves')
+
+    const sendDataToFirebase = async () => {
+        
     }
 
+    sendDataToFirebase()
+    
     const calculateSize = (img, maxWidth, maxHeight) => {
         let width = img.width;
         let height = img.height;
