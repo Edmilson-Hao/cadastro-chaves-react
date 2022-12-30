@@ -27,7 +27,12 @@ export default props => {
     const keyCollection = collection(db, 'chaves')
 
     const sendDataToFirebase = async () => {
+        const data = await getDocs(keyCollection)
+        const dadosColecao = data.docs.map(documento =>{
+            return documento._document.data.value.mapValue.fields
+        })
         
+        console.log(dadosColecao)
     }
 
     sendDataToFirebase()
